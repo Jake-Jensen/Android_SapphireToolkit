@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (packageInfo.packageName.contains("com.facebook.lite")) {
-                NameOverride = "Facebook (Lite))"
+                NameOverride = "Facebook (Lite)"
                 val Path = packageInfo.sourceDir
                 UpdateSlot = true
             }
