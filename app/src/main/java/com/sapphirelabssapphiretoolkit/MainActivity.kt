@@ -3,16 +3,13 @@ package com.sapphirelabssapphiretoolkit
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
-import android.widget.CheckBox
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import java.security.AccessController.getContext
 import java.util.*
 
 
@@ -38,12 +35,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        // Blurry.with(this).radius(25).sampling(2).onto(rootView)
         GetAllInstalled();
     }
 
     fun GetAllInstalled() {
+
+
         val pm = packageManager
+        var NameOverride = ""
         //get a list of installed apps.
         val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
         var CurrentSlot:Int = 0
@@ -54,23 +54,56 @@ class MainActivity : AppCompatActivity() {
             // Log.d(TAG, "Source dir : " + packageInfo.sourceDir)
             // Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName))
 
+            /* ------------------------------------- PACKAGES -------------------------------- */
             if (packageInfo.packageName.contains("com.delphicoder.flud")) {
-                val Name = packageInfo.packageName
+                NameOverride = "Flud"
                 val Path = packageInfo.sourceDir
                 UpdateSlot = true
             }
 
             if (packageInfo.packageName.contains("com.android.egg")) {
-                val Name = packageInfo.packageName
+                NameOverride = "Android Easter Egg"
                 val Path = packageInfo.sourceDir
                 UpdateSlot = true
             }
+
+            if (packageInfo.packageName.contains("com.zhiliaoapp.musically")) {
+                NameOverride = "Tiktok (Alpha variant)"
+                val Path = packageInfo.sourceDir
+                UpdateSlot = true
+            }
+
+            if (packageInfo.packageName.contains("com.ss.android.ugc.trill")) {
+                NameOverride = "Tiktok (Beta variant)"
+                val Path = packageInfo.sourceDir
+                UpdateSlot = true
+            }
+
+            if (packageInfo.packageName.contains("com.facebook.katana")) {
+                NameOverride = "Facebook (Full)"
+                val Path = packageInfo.sourceDir
+                UpdateSlot = true
+            }
+
+            if (packageInfo.packageName.contains("com.facebook.orca")) {
+                NameOverride = "Facebook Messenger"
+                val Path = packageInfo.sourceDir
+                UpdateSlot = true
+            }
+
+            if (packageInfo.packageName.contains("com.facebook.lite")) {
+                NameOverride = "Facebook (Lite))"
+                val Path = packageInfo.sourceDir
+                UpdateSlot = true
+            }
+
+            /*------------------------------------- PACKAGES --------------------------------- */
 
             if (UpdateSlot) {
                 UpdateSlot = false
                 var SlotToUpdate = findViewById<CheckBox>(GetOpenSlot());
                 var SlotToUpdateText = findViewById<TextView>(GetOpenSlot());
-                SlotToUpdate.text = packageInfo.packageName
+                SlotToUpdate.text = NameOverride
                 SlotToUpdateText.text = packageInfo.sourceDir
                 CurrentSlot++
             }
@@ -92,8 +125,8 @@ class MainActivity : AppCompatActivity() {
             10 -> { NextOpenSlot++; return Slot5_Name}
             11 -> { NextOpenSlot++; return Slot5_Path}
             else -> {
-                Log.d(TAG, "Couldn't find a free slot, defaulting to Slot0");
-                return Slot0_Name
+                Log.d(TAG, "Couldn't find a free slot, defaulting to -999");
+                return -999
             }
         }
     }
@@ -106,11 +139,13 @@ class MainActivity : AppCompatActivity() {
             if (VERSION.SDK_INT >= VERSION_CODES.P) {
                 Log.d(TAG, "We're running on Android P or above, switch to alternative uninstall.")
                 val intent = Intent(Intent.ACTION_DELETE)
-                intent.data = Uri.parse("package:com.example.mypackage")
+                var Preempt: String = "package:"
+                intent.data = Uri.parse("$Preempt$Package")
                 startActivity(intent)
             } else {
                 val intent = Intent(Intent.ACTION_UNINSTALL_PACKAGE)
-                intent.data = Uri.parse("package:com.example.mypackage")
+                var Preempt: String = "package:"
+                intent.data = Uri.parse("$Preempt$Package")
                 startActivity(intent)
             }
 
